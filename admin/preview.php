@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);
+require __DIR__.'/lib/render.php';
+try {$r=Norda\record((string)($_GET['id']??''));Norda\can($r['kind']);$lang=in_array($_GET['lang']??'',['az','en','ru'],true)?$_GET['lang']:'az';$d=$r['data'];$file=match($r['kind']){'category'=>'products/'.Norda\localizedFile($d['slug'],$lang),'product'=>'products/'.Norda\localizedFile('item-'.$d['slug'],$lang),'article'=>'articles/'.Norda\localizedFile($d['slug'],$lang),'page'=>$d['paths'][$lang]??'index.html',default=>'index.html'};[$html]=Norda\render($file,true,$r['id']);header('Content-Type: text/html; charset=utf-8');header('Cache-Control: no-store');header('X-Robots-Tag: noindex,nofollow');echo str_replace('<head>','<head><base href="/">',$html);}catch(Norda\Problem$e){http_response_code($e->status);echo Norda\e($e->getMessage());}
